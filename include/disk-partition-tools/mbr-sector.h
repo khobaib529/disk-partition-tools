@@ -19,22 +19,25 @@ class MBRSector {
     std::ostringstream oss;
     oss << "Bootsrap code: \n";
     oss << GetHexStringFromUint8Array(bootsrap_code_, 446);
-    oss << std::endl;
+    oss << "\n\n";
     for (int i = 0; i < 4; i++) {
       oss << "## Partition " << i << " ##\n";
       oss << partition_table_[i].Repr() << "\n";
     }
     oss << "Boot signature: ";
-    oss << GetHexStringFromUint16(GetBootSignature()) << "\n";
+    oss << GetHexStringFromUint16(GetBootSignature());
     return oss.str();
   }
   uint8_t* GetBootstrapCode() { return bootsrap_code_; }
   uint16_t GetBootSignature() { return boot_signature_; }
+  bool HasValidBootSignature() { return GetBootSignature() == 0xaa55; }
 
  private:
   uint8_t bootsrap_code_[446];
   MBRPartitionEntry partition_table_[4];
   uint16_t boot_signature_;
 } __attribute__((packed));
+
+static_assert(sizeof(MBRSector) == 512, "sizeof MBRSector must be 512 bytes.");
 
 #endif  // PARTITION_TOOLS_MBR_SECTOR_H_

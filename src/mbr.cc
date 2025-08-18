@@ -25,7 +25,10 @@ int main(int argc, char* argv[]) {
     FILE* fp = fopen(file_path.data(), "rb");
     MBRSector mbr_sector;
     fread(&mbr_sector, sizeof(MBRSector), 1, fp);
-    std::cout << mbr_sector.Repr();
+    if (mbr_sector.HasValidBootSignature())
+      std::cout << mbr_sector.Repr() << std::endl;
+    else
+      std::cout << "Boot signature not found in the first sector.\n";
     fclose(fp);
   }
 
