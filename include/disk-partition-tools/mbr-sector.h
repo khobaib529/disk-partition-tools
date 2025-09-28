@@ -3,9 +3,7 @@
 
 #include <cstdint>
 #include <cstdio>
-#include <ios>
 #include <iostream>
-#include <iterator>
 #include <ostream>
 #include <sstream>
 #include <string>
@@ -14,7 +12,7 @@
 #include "mbr-partition-entry.h"
 
 class MBRSector {
- public:
+public:
   std::string Repr() {
     std::ostringstream oss;
     oss << "Bootsrap code: \n";
@@ -28,11 +26,11 @@ class MBRSector {
     oss << GetHexStringFromUint16(GetBootSignature());
     return oss.str();
   }
-  uint8_t* GetBootstrapCode() { return bootsrap_code_; }
+  uint8_t *GetBootstrapCode() { return bootsrap_code_; }
   uint16_t GetBootSignature() { return boot_signature_; }
   bool HasValidBootSignature() { return GetBootSignature() == 0xaa55; }
 
- private:
+private:
   uint8_t bootsrap_code_[446];
   MBRPartitionEntry partition_table_[4];
   uint16_t boot_signature_;
@@ -40,4 +38,4 @@ class MBRSector {
 
 static_assert(sizeof(MBRSector) == 512, "sizeof MBRSector must be 512 bytes.");
 
-#endif  // PARTITION_TOOLS_MBR_SECTOR_H_
+#endif // PARTITION_TOOLS_MBR_SECTOR_H_

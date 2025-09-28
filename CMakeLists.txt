@@ -10,6 +10,7 @@ target_include_directories(mbr PUBLIC include/)
 # gpt executable
 add_executable(gpt src/gpt.cc src/utils.cc)
 target_include_directories(gpt PUBLIC third_party/CLI11)
+target_include_directories(gpt PUBLIC third_party/CRCpp)
 target_include_directories(gpt PUBLIC include/)
 
 # install mbr and gpt binary

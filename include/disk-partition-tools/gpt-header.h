@@ -1,15 +1,13 @@
 #ifndef PARTITION_TOOLS_GPT_HEADER_H_
 #define PARTITION_TOOLS_GPT_HEADER_H_
+#include "disk-partition-tools/efi-guid.h"
+#include <CRC.h>
 #include <cstdint>
 #include <ios>
 #include <sstream>
 #include <string>
-#include <vector>
-
-#include "disk-partition-tools/efi-guid.h"
-#include "disk-partition-tools/gpt-partition-entry.h"
 class GPTHeader {
- public:
+public:
   std::string Repr() {
     std::ostringstream oss;
     oss << std::hex << std::showbase;
@@ -55,7 +53,15 @@ class GPTHeader {
     return partition_entry_array_crc32_;
   }
 
- private:
+  bool IsVerified() {
+    uint32_t header_crc32 = header_crc32_;
+    header_crc32_ = 0;
+    std::uint32_t crc = CRC::Calculate(this, header_size_, CRC::CRC_32());
+    header_crc32_ = header_crc32;
+    return crc == header_crc32;
+  }
+
+private:
   uint64_t signature_;
   uint32_t revision_;
   uint32_t header_size_;
@@ -70,10 +76,10 @@ class GPTHeader {
   uint32_t number_of_partition_entries_;
   uint32_t size_of_partition_entry_;
   uint32_t partition_entry_array_crc32_;
-  uint8_t reserved_padding_[420];  // padding to fill the 512 byte
+  uint8_t reserved_padding_[420]; // padding to fill the 512 byte
 } __attribute__((packed));
 
 static_assert(sizeof(GPTHeader) == 512,
               "GPTHeader class size must be 512 bytes.");
 
-#endif  // PARTITION_TOOLS_GPT_HEADER_H_
+#endif // PARTITION_TOOLS_GPT_HEADER_H_
